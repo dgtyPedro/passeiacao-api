@@ -5,3 +5,14 @@
 app_lucky_number:
   path: /
   controller: App\Controller\ApiController::index
+
+create_user:
+  path: /user
+  controller: App\Controller\UserController::create
+  methods: POST
+
+login:
+  path: /login
+  controller: App\Controller\UserController::login
+  methods: POST
+
