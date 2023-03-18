@@ -2,17 +2,37 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-app_lucky_number:
+hello_world:
   path: /
-  controller: App\Controller\ApiController::index
+  controller: App\Controller\DefaultController::index
 
 create_user:
   path: /user
   controller: App\Controller\UserController::create
   methods: POST
 
-login:
+get_user:
+  path: /user/{id}
+  controller: App\Controller\UserController::show
+  methods: GET
+
+login_user:
   path: /login
   controller: App\Controller\UserController::login
+  methods: POST
+
+get_walkers:
+  path: /walker
+  controller: App\Controller\WalkerController::index
+  methods: GET
+
+create_walker:
+  path: /walker
+  controller: App\Controller\WalkerController::create
+  methods: POST
+
+login_walker:
+  path: /login_waker
+  controller: App\Controller\WalkerController::login
   methods: POST
 

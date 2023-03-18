@@ -1,10 +1,10 @@
 <?php
-// src/Controller/ApiController.php
+// src/Controller/DefaultController.php
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class ApiController
+class DefaultController
 {
     public function index(): Response
     {

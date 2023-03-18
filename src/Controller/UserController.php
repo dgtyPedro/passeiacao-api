@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 class UserController extends AbstractController
 {
 
-    public function create(ManagerRegistry $doctrine): Response
+    public function create(Request $request, ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
         $factory = new PasswordHasherFactory([
@@ -21,20 +21,20 @@ class UserController extends AbstractController
             'memory-hard' => ['algorithm' => 'sodium'],
         ]);
         $passwordHasher = $factory->getPasswordHasher('common');
-        $hash = $passwordHasher->hash($_POST['password']);
+        $hash = $passwordHasher->hash($request->request->get('password'));
 
         $userRepository = $entityManager->getRepository(Users::class);
-        $existingUser = $userRepository->findOneBy(['email' => $_POST['email']]);
-        $existingUser2 = $userRepository->findOneBy(['phone' => $_POST['phone']]);
+        $existingUser = $userRepository->findOneBy(['email' => $request->request->get('email')]);
+        $existingUser2 = $userRepository->findOneBy(['phone' => $request->request->get('phone')]);
 
         if ($existingUser || $existingUser2) {
             return new Response('There is already a user with this email or phone.');
         }
 
         $user = new Users();
-        $user->setName($_POST['name']);
-        $user->setEmail($_POST['email']);
-        $user->setPhone($_POST['phone']);
+        $user->setName($request->request->get('name'));
+        $user->setEmail($request->request->get('email'));
+        $user->setPhone($request->request->get('phone'));
         $user->setPassword($hash);
 
         // tell Doctrine you want to (eventually) save the Users (no queries yet)
@@ -43,7 +43,15 @@ class UserController extends AbstractController
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return new Response('Saved new user with id '.$user->getId());
+        return new Response('Saved new user with id '.$user->getId(), 200);
+    }
+
+    public function index(ManagerRegistry $doctrine, $id): Response
+    {
+        // get the walker from the database
+        $userRepository = $doctrine->getRepository(Users::class);
+        $user = $userRepository->find($id);
+        return new Response($user, 200);
     }
 
 
@@ -74,6 +82,6 @@ class UserController extends AbstractController
         }
 
         // password matches, create a response with a success message
-        return new Response('Welcome ' . $user->getName() . '!');
+        return new Response('Welcome ' . $user->getName() . '!', 200);
     }
 }
