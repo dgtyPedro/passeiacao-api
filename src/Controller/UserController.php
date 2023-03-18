@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends AbstractController
 {
@@ -46,12 +47,17 @@ class UserController extends AbstractController
         return new Response('Saved new user with id '.$user->getId(), 200);
     }
 
-    public function index(ManagerRegistry $doctrine, $id): Response
+    public function show(ManagerRegistry $doctrine, $id): Response
     {
         // get the walker from the database
-        $userRepository = $doctrine->getRepository(Users::class);
+        $entityManager = $doctrine->getManager();
+        $userRepository = $entityManager->getRepository(Users::class);
         $user = $userRepository->find($id);
-        return new Response($user, 200);
+        if (!$user) {
+            return new Response('User not found', 404);
+        }
+
+        return new JsonResponse((array) $user);
     }
 
 

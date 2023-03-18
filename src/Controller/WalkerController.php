@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Walkers;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
@@ -18,7 +19,10 @@ class WalkerController extends AbstractController
         // get the walker from the database
         $walkerRepository = $doctrine->getRepository(Walkers::class);
         $walkers = $walkerRepository->findAll();
-        return new Response($walkers, 200);
+        foreach ($walkers as $key=>$walker){
+            $walkers[$key] = (array) $walker;
+        }
+        return new JsonResponse($walkers);
     }
 
     public function create(Request $request, ManagerRegistry $doctrine): Response
